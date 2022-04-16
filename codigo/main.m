@@ -18,7 +18,7 @@ ix = randperm(data.num_data);
 test_lim = 200000;
 
 x_training = ix(1:floor(test_lim));
-x_testing = ix(floor(test_lim):end);
+x_testing = ix(floor(test_lim) + 1:end);
 
 %Training set
 data_train.X = data.X(:,x_training);
@@ -74,16 +74,22 @@ plot([1:size(eingenvalues)],eingenvalues,'o-');
 title("Eingenvalues");
 
 variance_preserved=zeros([1,size(eingenvalues)]);
+
+feature_reduction = 0;
+percentage = 90;
+
 for i=1:size(eingenvalues)
     variance=sum(eingenvalues(1:i))/sum(eingenvalues)*100;
     variance_preserved(1,i)=variance;
+
+    if variance >= percentage && feature_reduction == 0
+        feature_reduction = i;
+    end
 end
 subplot(1,2,2);
 bar(variance_preserved);
 title("Variance Preserved");
 
-disp("Kaisa First Features: " + kaisa1);
-disp("Kaisa Features with value greater than 1: " +  kaisa2);
 
 %Kruscal wallis and correlation coefficients matrix 
 for i=1:data_train.dim
@@ -97,6 +103,47 @@ C=corrcoef(data_train.X');
 figure('Name',"Correlation Coefficients Matrix");
 heatmap(C);
 title("Correlation Coefficients Matrix");
+
+
+%Data Reduction
+disp("Reduction with"+ percentage +"%: " + feature_reduction + " - >" + variance_preserved(feature_reduction));
+
+data_red.X = data_train.X(1:feature_reduction,:);
+data_red.y = data_train.y(:)';
+data_red.dim = size(data_red.X,1);
+data_red.num_data = size(data_red.X,2);
+data_red.name = "training Dataset reduction " + percentage + "%";
+data_red.indep_names = data_train.indep_names;
+data_red.dep_names = data_train.dep_names;
+
+
+%Histogram
+class1 = find(data_red.y == 0);
+class2 = find(data_red.y == 1);
+
+X1 = data_red.X(:,class1);
+y1 = data_red.y(:,class1);
+X2 = data_red.X(:,class2);
+y2 = data_red.y(:,class2);
+figure('Name',"Class Histogram");
+hold on
+histogram(X1(1,:),10);
+histogram(X2(1,:),10);
+hold off
+
+
+%Fisher LDA
+fisher_model = fld(data_red);
+ypred = linclass(data_test.X(1:feature_reduction,:), fisher_model);
+figure; ppatterns(data_red); pline(fisher_model);
+error_stpr = cerror(ypred, data_test.y);
+set(gca, 'fontweight', 'bold', 'fontsize', 14);
+title("fisher lda");
+axis([min(data_red.X(1,:)) max(data_red.X(1,:)) min(data_red.X(2,:)) max(data_red.X(2,:))])
+
+disp(error_stpr);
+
+
 %4.3 Experimental Analysis
 %4.4 Pattern Recognition Methods
 
