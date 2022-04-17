@@ -12,7 +12,7 @@ function [pred_y,true_y] = mdClassifier(data_train,data_test)
     for i=1:size(data_test.X,2)
         closest=Inf;
         rightCluster=-1;
-        for k=1:length(centroids)
+        for k=1:size(centroids,2)
             distance=pdist([centroids(:,k),data_test.X(:,i)]',"euclidean");
             if distance<closest
                 closest=distance;
