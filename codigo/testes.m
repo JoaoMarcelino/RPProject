@@ -1,3 +1,4 @@
+%{
 rng(2);
 % PCA + Minimmum Dist Classifier
 close all;
@@ -27,18 +28,23 @@ bar(variance_preserved);
 title("Variance Preserved");
 
 
-model = pca(data_train.X,4);
+model = pca(data_train.X,12);
 data_train.X=model.W'*data_train.X+model.b;
 data_test.X=model.W'*data_test.X+model.b;
 
 [pred_y,true_y]=mdClassifier(data_train,data_test);
 figure;
-C = confusionmat(true_y,pred_y);
-confusionchart(C);
+ConfusionMat = confusionmat(true_y,pred_y);
+confusionchart(ConfusionMat);
 accuracy=sum(pred_y==true_y)/size(true_y,2);
 disp(accuracy);
 
-%{
+
+[pred_y,true_y]=mahalClassifier(data_train,data_test);
+accuracy=sum(pred_y==true_y)/size(true_y,2);
+disp(accuracy);
+%}
+%%{
 rng(2);
 % PCA + Fisher LDA Minimmum Dist Classifier
 close all;
@@ -68,7 +74,7 @@ bar(variance_preserved);
 title("Variance Preserved");
 
 
-model = pca(data_train.X,4);
+model = pca(data_train.X,12);
 data_train.X=model.W'*data_train.X+model.b;
 data_test.X=model.W'*data_test.X+model.b;
 [data_train,data_test]=ldaFisher(data_train,data_test);
@@ -77,5 +83,11 @@ figure;
 C = confusionmat(true_y,pred_y);
 confusionchart(C);
 accuracy=sum(pred_y==true_y)/size(true_y,2);
+error=cerror(pred_y,true_y);
 disp(accuracy);
-%}
+disp(error);
+
+[pred_y,true_y]=mahalClassifier(data_train,data_test);
+accuracy=sum(pred_y==true_y)/size(true_y,2);
+disp(accuracy);
+%%}
