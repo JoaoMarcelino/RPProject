@@ -1,17 +1,37 @@
+% PCA + Mahal. MDC
 close all;
 clear all;
 
-data=load('data.mat').data;
-data.y=data.y(1,:)-1;
+for numFeatures=[1,4,12]
+    matrix=[];
+    for i=1:30
+        rng(i);
+        %   Data import
+        data=load('data.mat').data;
+        [data_train,data_test]=splitDataset(data,200000);
+        data_train.y=data_train.y(1,:)-1;
+        data_test.y=data_test.y(1,:)-1;
+        
+        
+        %PCA
+        data_train=scalestd(data_train);
+        data_test=scalestd(data_test);
+        
+        model = pca(data_train.X,numFeatures);
+        data_train.X=model.W'*data_train.X+model.b;
+        data_test.X=model.W'*data_test.X+model.b;
 
-[data,data]=ldaFisher(data,data);
-X1=data.X(1,find(data.y==0));
-X2=data.X(1,find(data.y==1));
-figure;
-H1=histogram(X1,40,'Normalization','probability','FaceAlpha',0.70);
-hold on;
-H2=histogram(X2,40,'Normalization','probability','FaceAlpha',0.70);
-hold off;
-legend('Class 0 (positive)','Class 1 (negative)');
-ylabel('Relative Probability');
-xlabel('Feature Value');
+        %mdc
+        [pred_y,true_y]=mahalClassifier(data_train,data_test);
+        [accuracy,specificity,sensibility]=computePerformance(pred_y,true_y);
+        matrix=[matrix,[accuracy;specificity;sensibility]];
+    end
+    disp(mean(matrix(1,:)));
+    disp(std(matrix(1,:)));
+    disp(mean(matrix(3,:)));
+    disp(std(matrix(3,:)));
+    disp(mean(matrix(2,:)));
+    disp(std(matrix(2,:)));
+    test3{numFeatures}=matrix;
+end
+save('test3.mat','test3');

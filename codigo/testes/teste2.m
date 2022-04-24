@@ -1,4 +1,4 @@
-% PCA + Minimmum Dist Classifier
+% PCA + Linear MDC
 close all;
 clear all;
 
@@ -20,12 +20,18 @@ for numFeatures=[1,4,12]
         model = pca(data_train.X,numFeatures);
         data_train.X=model.W'*data_train.X+model.b;
         data_test.X=model.W'*data_test.X+model.b;
-        
+
         %mdc
         [pred_y,true_y]=mdClassifier(data_train,data_test);
         [accuracy,specificity,sensibility]=computePerformance(pred_y,true_y);
         matrix=[matrix,[accuracy;specificity;sensibility]];
     end
+    disp(mean(matrix(1,:)));
+    disp(std(matrix(1,:)));
+    disp(mean(matrix(3,:)));
+    disp(std(matrix(3,:)));
+    disp(mean(matrix(2,:)));
+    disp(std(matrix(2,:)));
     test2{numFeatures}=matrix;
 end
 save('test2.mat','test2');
