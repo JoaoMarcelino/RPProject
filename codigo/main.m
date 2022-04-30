@@ -89,3 +89,22 @@ scatter(X2,(1:size(X2,2)).*0-0.25,'r');
 %4.3 Minimum Distance classifier
 [pred_y,true_y]=mdClassifier(data_train,data_test);
 
+
+
+% k-Nearest Neighbor
+
+data = load('data.mat').data;
+data= scalestd(data);
+
+[data_train,data_test]=splitDataset(data,200000);
+data_train.y=data_train.y(1,:)-1;
+data_test.y=data_test.y(1,:)-1;
+
+
+n_runs = 2;
+k= 10;
+knn(data_train, n_runs, k);
+
+
+
+

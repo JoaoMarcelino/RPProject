@@ -81,4 +81,3 @@ X2=data.X(13,:);
 figure;
 boxplot([X1,X2],[zeros(1,size(X1,2)),ones(1,size(X2,2))],'Labels',{'Age','General Health'});
 
-
