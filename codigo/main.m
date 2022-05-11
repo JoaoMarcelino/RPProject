@@ -1,12 +1,7 @@
 close all;
 clear;
-%4.1 Data import
-data=load('data.mat').data;
-[data_train,data_test]=splitDataset(data,200000);
-
-%scenario A - CoronaryHeartDisease: 0/1
-data_train.y=data_train.y(1,:)-1;
-data_test.y=data_test.y(1,:)-1;
+%4.1 Data import and Scenario Choosing
+[data_train,data_test]=chooseScenario(200000, 1);
 
 %data visualization
 figure('Name','Data Distribution');
