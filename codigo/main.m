@@ -102,4 +102,38 @@ knn(data_train, n_runs, k);
 
 
 
+%%
+%Bayes Classifier
+data = load('data.mat').data;
+[data_train,data_test]=splitDataset(data,200000);
+data_train.y=data_train.y(1,:)-1;
+data_test.y=data_test.y(1,:)-1;
 
+costs=[0 1; 0.01 0];
+[pred_y,true_y]=bayesClassifier(data_train,data_test,costs);
+[accuracy,specificity,sensibility]=computePerformance(pred_y,true_y);
+
+C = confusionmat(true_y,pred_y);
+confusionchart(C,[0 1]);
+
+
+%%
+%SVM Classifier
+data = load('data.mat').data;
+[data_train,data_test]=splitDataset(data,200000);
+data_train.y=data_train.y(1,:)-1;
+data_test.y=data_test.y(1,:)-1;
+
+data_train.X=data_train.X(1:4,:);
+data_test.X=data_test.X(1:4,:);
+
+constraint=1;
+gamma=1;
+%func='linear';
+func='rbf';
+%func='polynomial';
+[pred_y,true_y]=svmClassifier(data_train,data_test,func,constraint,gamma);
+[accuracy,specificity,sensibility]=computePerformance(pred_y,true_y);
+
+C = confusionmat(true_y,pred_y);
+confusionchart(C,[0 1]);
