@@ -16,13 +16,10 @@ for i=1:3
     data=load('data.mat').data;
     data=chooseScenario(data,i);
     fig=figure('Name','Data Distribution per Class');
-    y1=sum(data.y==1);
-    y2=sum(data.y==2);
-    y3=sum(data.y==3);
-    bar([y1,y2,y3]);
+    histogram(data.y,2);
     xlabel('Class');
     ylabel('Number of occurences');
-    title(sprintf('Data Distribution per Class - Scenario %d',i));
+    title('Data Distribution per Class -  ');  
 end
 
 
@@ -67,16 +64,13 @@ data.y=data.y(1,:)-1;
 data=scalestd(data);
 
 %%
-data=load('data.mat').data;
-data=chooseScenario(data,1);
 figure;
-histogram(data.X(9,find(data.y==1)),'Normalization','probability','FaceAlpha',0.70);
+histogram(data.X(9,find(data.y==0)),'Normalization','probability','FaceAlpha',0.70,'BinWidth',0.2);
 hold on;
-histogram(data.X(9,find(data.y==2)),'Normalization','probability','FaceAlpha',0.70);
-legend('Class 1 (positive)','Class 2 (negative)');
-title('Data Distribution per Class According to Age Category -  Scenario 1');
+histogram(data.X(9,find(data.y==1)),'Normalization','probability','FaceAlpha',0.70,'BinWidth',0.2);
+legend('Class 0 (positive)','Class 1 (negative)');
 xlabel('Age Category');
-ylabel('Relative Frequency');
+ylabel('Relative Probability');
 
 %%
 data=load('data.mat').data;
