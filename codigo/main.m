@@ -98,7 +98,7 @@ data_test.y=data_test.y(1,:)-1;
 
 n_runs = 2;
 k= 10;
-knn(data_train, n_runs, k);
+[pred_y,true_y] = knn(data_train, n_runs, k);
 
 
 
