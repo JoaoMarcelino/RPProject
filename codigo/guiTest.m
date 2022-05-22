@@ -32,7 +32,6 @@ switch features
 
     case 'Fishers LDA'
         [data_train,data_test]=ldaFisher(data_train,data_test);
-
     case 'ROC Curve'
         %TODO
     otherwise
@@ -46,17 +45,15 @@ switch model
     case 'Linear MDC'
         [pred_y,true_y]=mdClassifier(data_train,data_test);
     case 'Mahal MDC'
-        %TODO
+        [pred_y,true_y] = mahalClassifier(data_train,data_test);
     case 'Fishers LD'
         %TODO
     case 'Bayes Classifier'
         [pred_y,true_y]=bayesClassifier(data_train,data_test,costs);
     case 'KNN Classifier'
-        %MOST LIKELY MAL
-        %TODO
-        [pred_y,true_y]=knn(data_train, n_runs, k);
+        [pred_y,true_y] = knn(data, n_runs, k);
     case 'SVMs'
-        [pred_y,true_y]=svmClassifier(data_train,data_test,func,constraint,gamma)
+        [pred_y,true_y]=svmClassifier(data_train,data_test,func,constraint,gamma);
    otherwise
         warning('Unexpected Value');
 end

@@ -1,4 +1,4 @@
-function [err_matrix, models_matrix] = knn(data, n_runs, k)
+function [pred_y, test_y] = knn(data, n_runs, k)
 %KNN Summary of this function goes here
 %   Detailed explanation goes here
 err_matrix = [];
@@ -50,8 +50,10 @@ plot(average);
 err_min = find(average==min(average));
 disp(err_min + " - " +min(average));
 clear model;
-model = models_matrix(err_min(1));
+model_min = models_matrix(err_min(1));
 figure('Name', "best model k-nn"); ppatterns(data_test); pboundary(model);
 
+pred_y = knnclass(data_test.X, model_min);
+test_y = data_test.y;
 end
 
