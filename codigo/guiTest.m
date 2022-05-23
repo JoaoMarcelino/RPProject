@@ -25,21 +25,20 @@ for i= 1:n_iterations
     
             data_train=scalestd(data_train);
             data_test=scalestd(data_test);
-            model = pca(data_train.X);
-
+            
+            model = pca(data_train.X,n_features);
+            data_train.X=model.W'*data_train.X+model.b;
+            data_test.X=model.W'*data_test.X+model.b;
     
         case 'Kruskal-Wallis'
-            for i=1:data_train.dim
-                [p,atab,stats]=kruskalwallis(data_train.X(i,:),data_train.y,'off');
-                rank{i,1}=data_train.indep_names{i};
-                rank{i,2}=atab{2,n_features};
-                atab;
-            end
+            data_train.X=data_train.X([4,7,9,11,13],:);
+            data_test.X=data_test.X([4,7,9,11,13],:);
     
         case 'Fishers LDA'
             [data_train,data_test]=ldaFisher(data_train,data_test);
         case 'ROC Curve'
-            %TODO
+            data_train.X=data_train.X([4,7,9,11,13],:);
+            data_test.X=data_test.X([4,7,9,11,13],:);
         otherwise
             warning('Unexpected Value');
     end
@@ -48,11 +47,11 @@ for i= 1:n_iterations
     %Classification
     switch model_choice
         case 'Linear MDC'
-            [pred_y,true_y]=mdClassifier(data_train,data_test);
+            [pred_y,true_y] = mdClassifier(data_train,data_test);
         case 'Mahal MDC'
             [pred_y,true_y] = mahalClassifier(data_train,data_test);
         case 'Fishers LD'
-            %TODO
+            [pred_y,true_y] = mdClassifier(data_train,data_test);
         case 'Bayes Classifier'
             [pred_y,true_y]=bayesClassifier(data_train,data_test,cost);
         case 'KNN Classifier'
@@ -69,6 +68,9 @@ for i= 1:n_iterations
     %Compute Performance
     
     [Accuracy, Specificity, Sensitivity, FScore] = computePerformance(pred_y,true_y);
+    disp([Accuracy, Specificity, Sensitivity, FScore]);
+    C = confusionmat(true_y,pred_y);
+    confusionchart(C,[0 1]);
     acc = [acc Accuracy];
     spe = [spe Specificity];
     sen = [sen Sensitivity];
