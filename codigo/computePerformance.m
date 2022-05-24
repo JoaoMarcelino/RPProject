@@ -1,4 +1,5 @@
-function [accuracy,specificity,sensibility, fscore] = computePerformance(pred_y,true_y)
+function [accuracy,specificity,sensitivity, fscore] = computePerformance(pred_y,true_y)
+    
     accuracy=sum(pred_y==true_y)/size(true_y,2);
     tp=sum(pred_y==1 & true_y==1);
     fn=sum(pred_y==2 & true_y==1);
