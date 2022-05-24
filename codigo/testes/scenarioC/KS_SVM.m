@@ -1,4 +1,3 @@
-% Kruskal + KNN
 close all;
 clear all;
 

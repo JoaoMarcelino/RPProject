@@ -7,7 +7,7 @@ function [accuracy,specificity,sensitivity, fscore] = computePerformance(pred_y,
     fp=sum(pred_y==1 & true_y==2);
 
     specificity=tn/(tn+fp);
-    sensibility=tp/(tp+fn);
+    sensitivity=tp/(tp+fn);
     fscore = tp/(tp + 0.5 * (fp + fn));
 end
 

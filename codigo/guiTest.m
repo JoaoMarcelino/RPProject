@@ -1,28 +1,27 @@
-function [Accuracy, Accuracy_std , Sensitivity, Sensitivity_std, Specificity, Specificity_std, FScore, FScore_std] = guiTest(scenario, features, n_features, model_choice, n_iterations, cost)
+function [Accuracy, Accuracy_std , Sensitivity, Sensitivity_std, Specificity, Specificity_std, FScore, FScore_std] = guiTest(scenario, features, n_features, model_choice, n_iterations, cost,nSamples)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
 scenario = str2num(scenario);
 n_iterations = str2num(n_iterations);
+cost = str2num(cost);
 
 acc = [];
 spe = [];
 sen = [];
 fsc = [];
+%Feature Selection
+n_features = str2num(n_features);
 for i= 1:n_iterations
 
     %Scenario
     data=load('data.mat').data;
     data = chooseScenario(data, scenario);
     
-    %Feature Selection
-    n_features = str2num(n_features);
-    
-    
-    [data_train, data_test] = splitDataset(data, 200000);
+    [data_train, data_test] = splitDataset(data, nSamples);
     switch features
+        case 'Raw'
+            disp('Raw Features');
         case 'PCA'
-    
             data_train=scalestd(data_train);
             data_test=scalestd(data_test);
             
@@ -33,12 +32,11 @@ for i= 1:n_iterations
         case 'Kruskal-Wallis'
             data_train.X=data_train.X([4,7,9,11,13],:);
             data_test.X=data_test.X([4,7,9,11,13],:);
-    
         case 'Fishers LDA'
             [data_train,data_test]=ldaFisher(data_train,data_test);
         case 'ROC Curve'
-            data_train.X=data_train.X([4,7,9,11,13],:);
-            data_test.X=data_test.X([4,7,9,11,13],:);
+            data_train.X=data_train.X([5,9,13],:);
+            data_test.X=data_test.X([5,9,13],:);
         otherwise
             warning('Unexpected Value');
     end
@@ -53,14 +51,16 @@ for i= 1:n_iterations
         case 'Fishers LD'
             [pred_y,true_y] = mdClassifier(data_train,data_test);
         case 'Bayes Classifier'
-            [pred_y,true_y]=bayesClassifier(data_train,data_test,cost);
+            [pred_y,true_y]=bayesClassifierCost(data_train,data_test,cost);
         case 'KNN Classifier'
-            [pred_y,true_y] = knn(data, n_runs, k);
+            [pred_y,true_y] = knn(data_train,data_test, 3);
         case 'SVMs'
-            constraint=1;
-            gamma=1;
-            func='rbf';
-            [pred_y,true_y]=svmClassifier(data_train,data_test,func,constraint,gamma);
+            if nSamples<100000
+                error('Too few training samples');
+            end
+            data_train=resample(data_train,5000);
+            data_test=resample(data_test,5000);
+            [pred_y,true_y]=svmClassifier(data_train,data_test);
        otherwise
             warning('Unexpected Value');
     end
@@ -81,7 +81,7 @@ Accuracy = mean(acc);
 Accuracy_std = std(acc);
 
 Specificity = mean(spe);
-Specificity_std = mean(spe);
+Specificity_std = std(spe);
 
 Sensitivity = mean(sen);
 Sensitivity_std = std(sen);
