@@ -1,4 +1,4 @@
-function [areaUnderCurve] = rocArea(FPRValues,FNRValues)
+function [areaUnderCurve] = rocArea(FPR,FNR)
 %ROCAREA Summary of this function goes here
 %   Detailed explanation goes here
 SS=1-FNR;

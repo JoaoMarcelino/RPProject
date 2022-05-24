@@ -1,7 +1,7 @@
 function [data_train,data_test] = ldaFisher(data_train,data_test)
 
-    X1=data_train.X(:,find(data_train.y==0));
-    X2=data_train.X(:,find(data_train.y==1));
+    X1=data_train.X(:,find(data_train.y==1));
+    X2=data_train.X(:,find(data_train.y==2));
     m1=sum(X1,2)./size(X1,2);
     m2=sum(X2,2)./size(X2,2);
     S1=0;
